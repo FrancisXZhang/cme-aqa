@@ -1,1 +1,1 @@
-This is the code repository for the paper "Towards Cross-View Multimodality Action Quality Assessment for Traditional Chinese Medicine Physical Therapy". Currently, only the inference code is available. Upon acceptance, the full code and the proposed dataset will be released.
+This is the code repository for the paper "Towards Cross-View Multimodality Action Quality Assessment for Traditional Chinese Medicine Physical Therapy". Currently, only the inference and train code is available. Upon acceptance, the full proposed dataset will be released.
