@@ -1,7 +1,7 @@
 # Code Repository for the Paper  
 **"Towards Cross-View Multimodality Action Quality Assessment for Traditional Chinese Medicine Physical Therapy"**
 
-Currently, only the inference and training code and the sample data (https://durhamuniversity-my.sharepoint.com/:f:/g/personal/slxb76_durham_ac_uk/EtxEhloUsnZFpmHL6rKExx4B-j2ObLIxzQIGwuhd-DrrYw?e=dGrCmL) is available now. Upon acceptance, the full proposed dataset will be released.
+Currently, only the inference and training code and the [sample data](https://durhamuniversity-my.sharepoint.com/:f:/g/personal/slxb76_durham_ac_uk/EtxEhloUsnZFpmHL6rKExx4B-j2ObLIxzQIGwuhd-DrrYw?e=dGrCmL) is available now. Upon acceptance, the full proposed dataset will be released.
 
 ---
 
