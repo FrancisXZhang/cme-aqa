@@ -83,6 +83,7 @@ python Trainer_Fusion.py --fpv_json output_p/A_TPV \
   <em>Left to right:</em> Low, Mid, and High skill level participants as assessed by our framework.
 </p>
 
+> *The table shown at the top of each video displays the output of our framework compared to baseline methods. You may need to enlarge the GIFs to clearly observe the differences.*
 **Downloads:** [Low Skill (MP4)](https://github.com/FrancisXZhang/cme-aqa/raw/main/Demo_Videos/Low_Skill.mp4) [Mid Skill (MP4)](https://github.com/FrancisXZhang/cme-aqa/raw/main/Demo_Videos/Mid_Skill.mp4) [High Skill (MP4)](https://github.com/FrancisXZhang/cme-aqa/raw/main/Demo_Videos/High_Skill.mp4)
 
 
