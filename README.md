@@ -71,7 +71,7 @@ python Trainer_Fusion.py --fpv_json output_p/A_TPV \
 
 ```
 
-### Demonstration of Assessing Different Skill Levels
+## Demonstration of Assessing Different Skill Levels
 
 <p align="center">
   <img src="Demo_Videos/Low_Skill.gif" width="30%" title="Low Skill" />
