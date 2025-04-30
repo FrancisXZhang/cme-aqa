@@ -68,8 +68,23 @@ python Trainer_Fusion.py --fpv_json output_p/A_TPV \
                          --model_class Model \
                          --log_file Ablation_Result/CAT_PoseTrans_Dense_l4_EarlyShare.log
 
----
-## Example Demo
+
+```
+
+### Demonstration of Assessing Different Skill Levels
+
+<p align="center">
+  <img src="Demo_Videos/Low_Skill.gif" width="30%" title="Low Skill" />
+  <img src="Demo_Videos/Mid_Skill.gif" width="30%" title="Mid Skill" />
+  <img src="Demo_Videos/High_Skill.gif" width="30%" title="High Skill" />
+</p>
+
+<p align="center">
+  <em>Left to right:</em> Low, Mid, and High skill level participants as assessed by our framework.
+</p>
+
+**Downloads:** [Low Skill (MP4)](https://github.com/FrancisXZhang/cme-aqa/raw/main/Demo_Videos/Low_Skill.mp4) [Mid Skill (MP4)](https://github.com/FrancisXZhang/cme-aqa/raw/main/Demo_Videos/Mid_Skill.mp4) [High Skill (MP4)](https://github.com/FrancisXZhang/cme-aqa/raw/main/Demo_Videos/High_Skill.mp4)
+
 
 
 
