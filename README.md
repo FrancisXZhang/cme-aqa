@@ -26,14 +26,24 @@ Overall, the **CME-AQA** framework significantly enhances the precision of actio
   <em>Right:</em> First-person view simulating the practitioner's perspective during acupuncture.
 </p>
 
-**🔗 Downloads:**
+**Downloads:**
 - [Download third-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/1_0_0.MP4)
 - [Download first-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/2_0_0.MP4)
 
+
 <p align="center">
-  <img src="Sample_Videos_and_Labels/1_1_0.gif" width="45%" />
-  <img src="Sample_Videos_and_Labels/2_1_0.gif" width="45%" />
+  <img src="Sample_Videos_and_Labels/1_1_0.gif" width="45%" title="Third-person Tui Na practice" />
+  <img src="Sample_Videos_and_Labels/2_1_0.gif" width="45%" title="First-person Tui Na practice" />
 </p>
+
+<p align="center">
+  <em>Left:</em> Third-person perspective of a Tui Na (Chinese therapeutic massage) session.<br>
+  <em>Right:</em> First-person view from the practitioner performing Tui Na techniques.
+</p>
+
+**Downloads:**
+- [Download third-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/1_1_0.MP4)
+- [Download first-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/2_1_0.MP4)
 
 ---
 
