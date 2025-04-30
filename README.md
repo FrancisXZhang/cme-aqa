@@ -28,7 +28,6 @@ Overall, the **CME-AQA** framework significantly enhances the precision of actio
 </p>
 
 **Label for this case:**
-
 | Video_Side | Video_Head | NeedleHolding | Angle | Depth | Fast | InsertionFrequency | InsertionAmplitude | TwistingFrequency | TwistingAmplitude | FastWithdrawal |
 |------------|------------|----------------|-------|--------|------|---------------------|---------------------|--------------------|--------------------|----------------|
 | 1_0_0      | 2_0_0      | 1              | 1     | 1      | 1    | 0                   | 1                   | 1                  | 1                  | 1              |
@@ -49,6 +48,9 @@ Overall, the **CME-AQA** framework significantly enhances the precision of actio
 </p>
 
 **Label for this case:**
+| Video_Side | Video_Head | Action | PalmEmpty | FingerSolid | Slow | Depth | Frequency |
+|------------|------------|--------|------------|--------------|------|--------|-----------|
+| 1_1_0      | 2_1_0      | 1      | 0          | 1            | 0    | 0      | 1         |
 
 **Downloads:** [Download third-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/1_1_0.MP4) [Download first-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/2_1_0.MP4)
 
