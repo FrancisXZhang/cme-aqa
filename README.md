@@ -22,9 +22,13 @@ Overall, the **CME-AQA** framework significantly enhances the precision of actio
 </p>
 
 <p align="center">
-  <em>Left:</em> Third-person perspective of an acupuncture procedure.  
-  <em>Right:</em> First-person perspective simulating the practitioner's view during needling.
+  <em>Left:</em> Third-person perspective of an acupuncture practice session.<br>
+  <em>Right:</em> First-person view simulating the practitioner's perspective during acupuncture.
 </p>
+
+**🔗 Downloads:**
+- [Download third-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/1_0_0.MP4)
+- [Download first-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/2_0_0.MP4)
 
 <p align="center">
   <img src="Sample_Videos_and_Labels/1_1_0.gif" width="45%" />
