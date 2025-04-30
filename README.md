@@ -52,7 +52,7 @@ Overall, the **CME-AQA** framework significantly enhances the precision of actio
 |------------|------------|--------|------------|--------------|------|--------|-----------|
 | 1_1_0      | 2_1_0      | 1      | 0          | 1            | 0    | 0      | 1         |
 
-**Downloads:** [Download third-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/1_1_0.MP4) [Download first-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/2_1_0.MP4)
+**Downloads:** [Download third-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/1_1_0.MP4), [Download first-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/2_1_0.MP4)
 
 ---
 
