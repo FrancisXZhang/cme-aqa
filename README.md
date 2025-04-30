@@ -14,9 +14,9 @@ To address these limitations, we propose the **Cross-View Multimodality Enhanced
 Overall, the **CME-AQA** framework significantly enhances the precision of action quality assessment in TCM training by addressing challenges related to self-occlusion and limited environmental awareness.
 
 ---
-## Example Data
+## Example Videos from the Dataset
 
-### Acupuncture Sample Videos
+### Acupuncture Example Videos
 <p align="center">
   <img src="Sample_Videos_and_Labels/1_0_0.gif" width="45%" title="Third-person view: acupuncture practice" />
   <img src="Sample_Videos_and_Labels/2_0_0.gif" width="45%" title="First-person view: acupuncture practice" />
@@ -36,7 +36,7 @@ Overall, the **CME-AQA** framework significantly enhances the precision of actio
 **Downloads:** [Download third-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/1_0_0.MP4) [Download first-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/2_0_0.MP4)
 
 
-### Tuina Sample Videos
+### Tuina Example Videos
 <p align="center">
   <img src="Sample_Videos_and_Labels/1_1_0.gif" width="45%" title="Third-person Tui Na practice" />
   <img src="Sample_Videos_and_Labels/2_1_0.gif" width="45%" title="First-person Tui Na practice" />
