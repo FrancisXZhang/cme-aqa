@@ -67,3 +67,9 @@ python Trainer_Fusion.py --fpv_json output_p/A_TPV \
                          --model_script Ablation_Model.CAT_PoseTrans_Dense_l4_EarlyShare \
                          --model_class Model \
                          --log_file Ablation_Result/CAT_PoseTrans_Dense_l4_EarlyShare.log
+
+---
+## Example Demo
+
+
+
