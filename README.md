@@ -20,6 +20,10 @@ Overall, the **CME-AQA** framework significantly enhances the precision of actio
   <img src="Sample_Videos_and_Labels/2_0_0.gif" width="45%" />
 </p>
 
+<p align="center">
+  <img src="Sample_Videos_and_Labels/1_1_0.gif" width="45%" />
+  <img src="Sample_Videos_and_Labels/2_1_0.gif" width="45%" />
+</p>
 
 ---
 
