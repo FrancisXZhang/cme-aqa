@@ -21,20 +21,19 @@ Overall, the **CME-AQA** framework significantly enhances the precision of actio
   <img src="Sample_Videos_and_Labels/2_0_0.gif" width="45%" title="First-person view: acupuncture practice" />
 </p>
 
+<p align="center">
+  <em>Left:</em> Third-person perspective of an acupuncture practice session.<br>
+  <em>Right:</em> First-person view simulating the practitioner's perspective during acupuncture.
+</p>
+
 **Label for this case:**
 
 | Video_Side | Video_Head | NeedleHolding | Angle | Depth | Fast | InsertionFrequency | InsertionAmplitude | TwistingFrequency | TwistingAmplitude | FastWithdrawal |
 |------------|------------|----------------|-------|--------|------|---------------------|---------------------|--------------------|--------------------|----------------|
 | 1_0_0      | 2_0_0      | 1              | 1     | 1      | 1    | 0                   | 1                   | 1                  | 1                  | 1              |
 
-<p align="center">
-  <em>Left:</em> Third-person perspective of an acupuncture practice session.<br>
-  <em>Right:</em> First-person view simulating the practitioner's perspective during acupuncture.
-</p>
 
-**Downloads:**
-- [Download third-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/1_0_0.MP4)
-- [Download first-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/2_0_0.MP4)
+[Download third-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/1_0_0.MP4) [Download first-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/2_0_0.MP4)
 
 
 <p align="center">
