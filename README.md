@@ -33,7 +33,7 @@ Overall, the **CME-AQA** framework significantly enhances the precision of actio
 | 1_0_0      | 2_0_0      | 1              | 1     | 1      | 1    | 0                   | 1                   | 1                  | 1                  | 1              |
 
 
-**Downloads:** [Download third-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/1_0_0.MP4) [Download first-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/2_0_0.MP4)
+**Downloads:** [Download third-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/1_0_0.MP4), [Download first-person video](https://github.com/FrancisXZhang/cme-aqa/raw/main/Sample_Videos_and_Labels/2_0_0.MP4)
 
 
 ### Tuina Example Videos
@@ -85,7 +85,7 @@ python Trainer_Fusion.py --fpv_json output_p/A_TPV \
 
 >*The table shown at the top of each video displays the output of our framework compared to baseline methods. You may click on the GIF to enlarge it and clearly observe the differences.*
 
-**Downloads:** [Low Skill (MP4)](https://github.com/FrancisXZhang/cme-aqa/raw/main/Demo_Videos/Low_Skill.mp4) [Mid Skill (MP4)](https://github.com/FrancisXZhang/cme-aqa/raw/main/Demo_Videos/Mid_Skill.mp4) [High Skill (MP4)](https://github.com/FrancisXZhang/cme-aqa/raw/main/Demo_Videos/High_Skill.mp4)
+**Downloads:** [Low Skill (MP4)](https://github.com/FrancisXZhang/cme-aqa/raw/main/Demo_Videos/Low_Skill.mp4), [Mid Skill (MP4)](https://github.com/FrancisXZhang/cme-aqa/raw/main/Demo_Videos/Mid_Skill.mp4), [High Skill (MP4)](https://github.com/FrancisXZhang/cme-aqa/raw/main/Demo_Videos/High_Skill.mp4)
 
 
 
