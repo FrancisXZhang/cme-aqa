@@ -16,6 +16,14 @@ import os
 from glob import glob
 from natsort import natsorted
 
+from sklearn.model_selection import KFold
+from sklearn.preprocessing import StandardScaler
+from scipy.stats import spearmanr
+import numpy as np
+import torch
+
+from copy import deepcopy
+
 import logging
 
 class HandPoseTrainer:
@@ -54,180 +62,213 @@ class HandPoseTrainer:
         # Loss function and optimizer
         self.criterion = nn.L1Loss()
         self.criterion2 = nn.MSELoss()
-        self.aligmnet_loss =  nn.L1Loss()
-        self.optimizer = Adam(self.model.parameters(), lr=lr)
+        self.reg_loss = nn.L1Loss()
+        self.alignment_loss = nn.MSELoss()
+        
 
+        self.target_names = ['Insert_time', 'Withdraw_time', 'Frequent'] 
+        
     def train(self):
+
+
         kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
-        spearman_corr_total = 0
-        relative_l2_distance_total = 0
-        test_acc = torch.zeros(1, self.num_classes).to(self.device)
-        test_f1 = torch.zeros(1, self.num_classes).to(self.device)
-        test_precision = torch.zeros(1, self.num_classes).to(self.device)
-        test_recall = torch.zeros(1, self.num_classes).to(self.device)
-
+        # aggregate across folds
+        folds_metrics = []
+        # 1) SAVE initial model state
+        init_state = deepcopy(self.model.state_dict())
+        device = self.device
         for fold, (train_idx, val_idx) in enumerate(kf.split(self.dataset)):
+
+            # 2) RESET model + optimizer + scaler (+ scheduler) for this fold
+            self.model.load_state_dict(init_state)          # reset weights
+            self.model.to(device)    
+            self.optimizer = Adam(self.model.parameters(), lr=self.lr)
+            
             logging.info(f'Fold {fold + 1}')
-            print(f'Fold {fold + 1}')
             train_subset = Subset(self.dataset, train_idx)
-            val_subset = Subset(self.dataset, val_idx)
-            train_loader = DataLoader(train_subset, batch_size=self.batch_size, shuffle=True)
-            val_loader = DataLoader(val_subset, batch_size=1, shuffle=False)
+            val_subset   = Subset(self.dataset, val_idx)
+
+            # ----- optional: standardize targets per fold -----
+            # fit scaler on training targets
+            y_train = []
+            for i in range(len(train_subset)):
+                y_train.append(train_subset[i]['label_reg'])
+            y_train = np.stack([np.asarray(y, dtype=np.float32) for y in y_train], axis=0)  # [N, n_targets]
+            y_scaler = StandardScaler()
+            y_scaler.fit(y_train)
+
+            # small wrapper to apply scaling on-the-fly
+            def collate_with_scaling(batch):
+                xs = torch.stack([b['tpv_pose'] for b in batch], dim=0)
+                ys = np.stack([np.asarray(b['label_reg'], dtype=np.float32) for b in batch], axis=0)
+                ys = y_scaler.transform(ys)  # standardize
+                ys = torch.from_numpy(ys).float()
+                return {'tpv_pose': xs, 'label_reg': ys}
+
+            # val collate (also scaled, but we’ll invert for reporting)
+            def collate_val(batch):
+                xs = torch.stack([b['tpv_pose'] for b in batch], dim=0)
+                ys = np.stack([np.asarray(b['label_reg'], dtype=np.float32) for b in batch], axis=0)
+                ys_scaled = y_scaler.transform(ys)
+                return {
+                    'tpv_pose': xs,
+                    'label_reg': torch.from_numpy(ys_scaled).float(),
+                    'label_reg_raw': torch.from_numpy(ys).float()
+                }
+
+            train_loader = DataLoader(train_subset, batch_size=self.batch_size, shuffle=True,
+                                    collate_fn=collate_with_scaling)
+            val_loader   = DataLoader(val_subset, batch_size=1, shuffle=False,
+                                    collate_fn=collate_val)
+
+            best_val_mae = float('inf')
+            best_state   = None
 
             for epoch in range(self.num_epochs):
                 self.model.train()
-                total_loss = 0
-                total_class_loss = 0
-                total_tpv_class_loss = 0
-                total_aligmnet_loss = 0
-                acc_error = torch.zeros(1, self.num_classes).to(self.device)
+                total_loss = 0.0
 
                 for i, data in enumerate(train_loader):
-                    fpv_inputs = data['fpv_feature'].to(self.device)
-                    fpv_poses = data['fpv_pose'].to(self.device)
-                    tpv_inputs = data['tpv_feature'].to(self.device)
-                    tpv_poses = data['tpv_pose'].to(self.device)
+                    inputs     = data['tpv_pose'].to(self.device)           # [B, ...]
+                    reg_labels = data['label_reg'].to(self.device)          # [B, n_targets] (standardized)
 
-                    labels = data['label'].to(self.device)
-                    
                     if epoch == 0 and i == 0:
-                        print('fpv_inputs:', fpv_inputs.shape)
-                        print('fpv_poses:', fpv_poses.shape)
-                        print('tpv_inputs:', tpv_inputs.shape)
-                        print('tpv_poses:', tpv_poses.shape)
-                        print('labels:', labels.shape)
+                        print('inputs:', inputs.shape)
+                        print('reg_labels:', reg_labels.shape)
 
-                    # Reset gradients
                     self.optimizer.zero_grad()
-                    # Forward pass
-                    outputs, feature = self.model(fpv_inputs, fpv_poses, fpv = True)
-
-                    tpv_outputs, tpv_feature = self.model(tpv_inputs, tpv_poses, fpv = False)
-                    
-                    print('outputs:', outputs)  
-                    print('labels:', labels)
-                    class_loss = self.criterion(outputs, labels) + self.criterion2(outputs, labels)
-                    tpv_class_loss = self.criterion(tpv_outputs, labels) + self.criterion2(tpv_outputs, labels)
-                    aligmnet_loss = self.aligmnet_loss(feature, tpv_feature)
-                    loss = class_loss + aligmnet_loss + tpv_class_loss
-                    # Backward pass and optimize
+                    outputs = self.model(inputs)                            # [B, n_targets], no activation
+                    loss    = self.reg_loss(outputs, reg_labels)
                     loss.backward()
                     self.optimizer.step()
 
-                    # Calculate accuracy error
-                    output_index = outputs > 0.5
-
-                    # accuarcy
-                    acc_error += (output_index == labels).sum(dim=0)
-
-                    total_class_loss += class_loss.item()
-                    total_tpv_class_loss += tpv_class_loss.item()
-                    total_aligmnet_loss += aligmnet_loss.item()
                     total_loss += loss.item()
 
-                print(f'Epoch [{epoch + 1}/{self.num_epochs}], Loss: {total_loss / len(train_loader)}')
-                logging.info(f'Epoch [{epoch + 1}/{self.num_epochs}], Loss: {total_loss / len(train_loader)}')
-                logging.info(f'Class Loss: {total_class_loss / len(train_loader)}')
-                logging.info(f'Aligmnet Loss: {total_aligmnet_loss / len(train_loader)}')
-                acc_error = acc_error / len(train_loader) / self.batch_size
-                for i in range(self.num_classes):
-                    logging.info(f'Class {i} Accuracy: {acc_error[0][i]}')
-                    print(f'Class {i} Accuracy: {acc_error[0][i]}')
+                train_loss = total_loss / max(1, len(train_loader))
+                logging.info(f'Fold {fold+1} | Epoch [{epoch+1}/{self.num_epochs}] TrainLoss: {train_loss:.4f}')
+                print(f'Fold {fold+1} | Epoch [{epoch+1}/{self.num_epochs}] TrainLoss: {train_loss:.4f}')
 
-            # Validation phase
-            self.model.eval()
-            val_loss = 0
-            all_labels = []
-            all_outputs = []
-            all_outputs_index = []
+                # ----- Validation -----
+                self.model.eval()
+                with torch.no_grad():
+                    preds_raw = []
+                    gts_raw   = []
+                    val_losses = []
+                    for data in val_loader:
+                        x = data['tpv_pose'].to(self.device)
+                        y_scaled = data['label_reg'].to(self.device)        # standardized
+                        y_raw    = data['label_reg_raw'].cpu().numpy()      # original scale for reporting
 
-            acc_error = torch.zeros(1, self.num_classes).to(self.device)
+                        yhat_scaled = self.model(x)                         # standardized space
+                        val_loss    = self.reg_loss(yhat_scaled, y_scaled).item()
+                        val_losses.append(val_loss)
 
-            spearman_corr_total = 0
-            relative_l2_distance_total = 0
+                        # invert scaling for metrics
+                        yhat_scaled_np = yhat_scaled.cpu().numpy()
+                        yhat_raw_np    = y_scaler.inverse_transform(yhat_scaled_np)
 
-            with torch.no_grad():
-                for data in val_loader:
-                    
-                    fpv_inputs = data['fpv_feature'].to(self.device)
-                    fpv_poses = data['fpv_pose'].to(self.device)
-                    tpv_inputs = data['tpv_feature'].to(self.device)
-                    tpv_poses = data['tpv_pose'].to(self.device)
+                        preds_raw.append(yhat_raw_np[0])
+                        gts_raw.append(y_raw[0])
 
-                    labels = data['label'].to(self.device)
-                    
-                    outputs, feature = self.model(fpv_inputs, fpv_poses, fpv = True)
-                    tpv_outputs, tpv_feature = self.model(tpv_inputs, tpv_poses, fpv = False)
+                    preds_raw = np.stack(preds_raw, axis=0)  # [Nv, n_targets]
+                    gts_raw   = np.stack(gts_raw,   axis=0)  # [Nv, n_targets]
 
-                    loss = self.criterion(outputs, labels) + self.criterion2(outputs, labels)
-                    val_loss += loss.item()
+                    # Metrics on original scale
+                    mae = np.mean(np.abs(preds_raw - gts_raw), axis=0)         # per-target
+                    mse = np.mean((preds_raw - gts_raw)**2, axis=0)
+                    rmse = np.sqrt(mse)
+                    # R^2 (per target)
+                    ss_res = np.sum((preds_raw - gts_raw)**2, axis=0)
+                    ss_tot = np.sum((gts_raw - gts_raw.mean(axis=0))**2, axis=0) + 1e-12
+                    r2 = 1.0 - ss_res / ss_tot
 
-                    output_index = outputs > 0.5
+                    # Spearman (per target) – safe compute
+                    spearman = []
+                    for t in range(preds_raw.shape[1]):
+                        try:
+                            sp = spearmanr(gts_raw[:, t], preds_raw[:, t], nan_policy='omit').correlation
+                        except Exception:
+                            sp = np.nan
+                        spearman.append(sp)
+                    spearman = np.array(spearman, dtype=np.float32)
 
-                    all_labels.append(labels.cpu().numpy())
-                    all_outputs.append(outputs.cpu().numpy())
-                    all_outputs_index.append(output_index.cpu().numpy())
+                    val_mae_mean = float(np.mean(mae))
+                    val_loss_mean = float(np.mean(val_losses))
 
+                    # ---- pretty, per-target report ----
+                    per_target_str = " | ".join(
+                        [f"{self.target_names[t]} MAE={mae[t]:.4f}" for t in range(len(self.target_names))]
+                    )
+                    print(f'Fold {fold+1} | Epoch {epoch+1} | ValLoss(scaled): {val_loss_mean:.4f} | '
+                        f'MAE(mean)={val_mae_mean:.4f} | {per_target_str}')
+                    logging.info(f'Fold {fold+1} | Epoch {epoch+1} | ValLoss(scaled): {val_loss_mean:.4f} | '
+                                f'MAE(mean)={val_mae_mean:.4f} | per-target MAE: '
+                                + ", ".join([f"{self.target_names[t]}={mae[t]:.4f}" for t in range(len(self.target_names))]))
 
-                    # accuarcy
-                    acc_error += (output_index == labels).sum(dim=0)
-                    
-            acc_error = acc_error / len(val_loader)
-            test_acc += acc_error                
-            
-            all_labels = np.concatenate(all_labels)
-            all_outputs = np.concatenate(all_outputs)
-            all_outputs_index = np.concatenate(all_outputs_index)
-            logging.info(f'All Labels: {all_labels.shape}')
-            logging.info(f'All Outputs: {all_outputs.shape}')
-            logging.info(f'All Outputs Index: {all_outputs_index.shape}')
+                    # Keep best by mean MAE but store full per-target vectors too
+                    if val_mae_mean < best_val_mae:
+                        best_val_mae = val_mae_mean
+                        best_state = {
+                            'model': {k: v.cpu() for k, v in self.model.state_dict().items()},
+                            'mae': mae, 'rmse': rmse, 'r2': r2, 'spearman': spearman,
+                            'val_mae_mean': val_mae_mean
+                        }
 
-            for i in range(self.num_classes):
-                logging.info(f'Class {i} Accuracy: {acc_error[0][i]}')
+            if best_state is not None:
+                self.model.load_state_dict(best_state['model'])
+                fold_report = {
+                    'val_mae_mean': float(best_state['val_mae_mean']),
+                    'mae': best_state['mae'],
+                    'rmse': best_state['rmse'],
+                    'r2': best_state['r2'],
+                    'spearman': best_state['spearman']
+                }
+            else:
+                # fallback (shouldn’t happen)
+                fold_report = {'val_mae_mean': float('inf')}
 
-                tmp_f1 = f1_score(all_labels[:,i], all_outputs_index[:,i], average='macro')
-                logging.info(f'Class {i} F1 Score, {tmp_f1}')
-                test_f1[0][i] += tmp_f1
+            folds_metrics.append(fold_report)
+            print(f'=== Fold {fold+1} best MAE: {fold_report["val_mae_mean"]:.4f} ===')
+            logging.info(f'=== Fold {fold+1} best MAE: {fold_report["val_mae_mean"]:.4f} ===')
 
-                tmp_precision = precision_score(all_labels[:,i], all_outputs_index[:,i], average='macro')
-                logging.info(f'Class {i} Precision, {tmp_precision}')
-                test_precision[0][i] += tmp_precision
+            # Save model
+            folds_metrics.append(fold_report)
+            print(f'=== Fold {fold+1} [LAST] MAE: {fold_report["val_mae_mean"]:.4f} ===')
+            logging.info(f'=== Fold {fold+1} [LAST] MAE: {fold_report["val_mae_mean"]:.4f} ===')
 
-                tmp_recall = recall_score(all_labels[:,i], all_outputs_index[:,i], average='macro')
-                logging.info(f'Class {i} Recall, {tmp_recall}')
-                test_recall[0][i] += tmp_recall
+            # extract model name from args.model_script or args.model_class
+            model_name = os.path.basename(args.model_script).replace(".py","")
+            # or better: use the class name (cleaner)
+            model_name = args.model_script
 
-            # Calculate Spearman correlation after summing the labels and outputs
-            spearman_corr, _ = spearmanr(all_labels.sum(axis=1).flatten(), all_outputs.sum(axis=1).flatten())
-            spearman_corr_total += spearman_corr
-            logging.info(f'Spearman Correlation: {spearman_corr}')
+            # extract dataset tag from fpv_json folder path
+            fpv_tag = os.path.basename(os.path.normpath(args.fpv_json))
 
-            # Calculate relative L2 distance
-            relative_l2 = relative_l2_distance(all_labels.sum(axis=1).flatten(), all_outputs.sum(axis=1).flatten()
-            , ymax = self.num_classes, ymin = 0)
-            relative_l2_distance_total += relative_l2
-            logging.info(f'Relative L2 Distance: {relative_l2}')
+            # then when saving per fold:
+            model_path = os.path.join('Weights', f'{model_name}_{fpv_tag}_fold{fold+1}.pth')
+            torch.save(self.model.state_dict(), model_path)
 
-  
-        for i in range(self.num_classes):
-            test_acc[0][i] = test_acc[0][i] / 5
-            test_f1[0][i] = test_f1[0][i] / 5
-            test_precision[0][i] = test_precision[0][i] / 5
-            test_recall[0][i] = test_recall[0][i] / 5
+        # ----- Aggregate across folds -----
+        # Average per-target metrics if available
+        has_targets = all('mae' in m for m in folds_metrics)
+        if has_targets:
+            mae_all = np.stack([m['mae'] for m in folds_metrics], axis=0)
+            rmse_all = np.stack([m['rmse'] for m in folds_metrics], axis=0)
+            r2_all = np.stack([m['r2'] for m in folds_metrics], axis=0)
+            sp_all = np.stack([m['spearman'] for m in folds_metrics], axis=0)
 
-            logging.info(f'Average Class {i} Accuracy: {test_acc[0][i]}')
-            logging.info(f'Average Class {i} F1 Score, {test_f1[0][i]}')
-            logging.info(f'Average Class {i} Precision, {test_precision[0][i]}')
-            logging.info(f'Average Class {i} Recall, {test_recall[0][i]}')
-
-        logging.info(f'Average Spearman Correlation: {spearman_corr_total / 5}')
-        logging.info(f'Average Relative L2 Distance: {relative_l2_distance_total / 5}')
+            print('CV | MAE per-target:', np.mean(mae_all, axis=0))
+            print('CV | RMSE per-target:', np.mean(rmse_all, axis=0))
+            print('CV | R2 per-target:', np.mean(r2_all, axis=0))
+            print('CV | Spearman per-target:', np.nanmean(sp_all, axis=0))
+            print('CV | MAE mean:', float(np.mean([m["val_mae_mean"] for m in folds_metrics])))
+            logging.info('CV | MAE per-target: ' + ", ".join([f"{self.target_names[t]}={np.mean(mae_all, axis=0)[t]:.4f}" for t in range(len(self.target_names))]))
+            logging.info('CV | RMSE per-target: ' + ", ".join([f"{self.target_names[t]}={np.mean(rmse_all, axis=0)[t]:.4f}" for t in range(len(self.target_names))]))
+            logging.info('CV | R2 per-target: ' + ", ".join([f"{self.target_names[t]}={np.mean(r2_all, axis=0)[t]:.4f}" for t in range(len(self.target_names))]))
+            logging.info('CV | Spearman per-target: ' + ", ".join([f"{self.target_names[t]}={np.nanmean(sp_all, axis=0)[t]:.4f}" for t in range(len(self.target_names))]))
 
         print("Training complete")
-        # Save model
-        model_path = 'hand_pose_model.pth'
-        torch.save(self.model.state_dict(), model_path)
 
 
 def main(args):
@@ -247,7 +288,7 @@ def main(args):
     model_class = getattr(model_module, args.model_class)
 
     # Initialize the model
-    model = model_class(in_channels=2048, num_class=num_classes)
+    model = model_class(in_channels=3, num_class=num_classes, graph_args=graph_args, edge_importance_weighting=True)
     model = model.to(torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
 
     # Initialize the trainer and start training
@@ -267,10 +308,10 @@ if __name__ == "__main__":
     parser.add_argument('--tpv_f', type=str, required=True, help='Folder containing visual features.')
     
     parser.add_argument('--label_file', type=str, required=True, help='CSV file containing labels.')
-    parser.add_argument('--num_classes', type=int, default=9, help='Number of classes for classification task.')
+    parser.add_argument('--num_classes', type=int, default=3, help='Number of classes for classification task.')
     parser.add_argument('--lr', type=float, default=1e-4, help='Learning rate for the optimizer.')
     parser.add_argument('--batch_size', type=int, default=2, help='Batch size for training.')
-    parser.add_argument('--num_epochs', type=int, default=100, help='Number of epochs to train the model.')
+    parser.add_argument('--num_epochs', type=int, default=50, help='Number of epochs to train the model.')
     parser.add_argument('--model_script', type=str, required=True, help='Script containing the model definition.')
     parser.add_argument('--model_class', type=str, required=True, help='Name of the model class to instantiate.')
     parser.add_argument('--log_file', type=str, default='Training.log', help='Log file name.')
