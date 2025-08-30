@@ -140,7 +140,7 @@ class HandPoseTrainer:
                     fpv_poses  = data['fpv_pose'].to(self.device)
                     tpv_inputs = data['tpv_feature'].to(self.device)
                     tpv_poses  = data['tpv_pose'].to(self.device)
-                    reg_labels = data['label_reg'].to(self.device)        # standardized targets
+                    reg_labels = data['label_reg'].to(self.device)    
 
                     if epoch == 0 and i == 0:
                         print('fpv_inputs:', fpv_inputs.shape)
@@ -179,7 +179,6 @@ class HandPoseTrainer:
                             f'Loss={total_loss/n_batches:.4f} | FPV={total_reg_fpv_loss/n_batches:.4f} '
                             f'| TPV={total_reg_tpv_loss/n_batches:.4f} | Align={total_align_loss/n_batches:.4f}')
 
-                # ---------- Validation (compute metrics on ORIGINAL scale) ----------
                 self.model.eval()
                 with torch.no_grad():
                     preds_raw = []
