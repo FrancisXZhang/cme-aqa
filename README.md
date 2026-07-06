@@ -89,4 +89,64 @@ python Trainer_Fusion.py --fpv_json output_p/A_TPV \
 
 
 
+---
 
+## Clean Classification Training Workflow
+
+This repository also includes a tidied package-style classification workflow under `src/`
+with executable scripts under `tools/`. This is intended for the class-based CME-AQA
+experiments where per-class accuracy, precision, recall, F1, macro F1, and weighted F1
+are the primary metrics.
+
+```text
+src/cme_aqa/
+  dataset/       # dual-view pose JSON and visual feature dataset
+  model/         # CAT fusion model variants
+  training/      # classification trainer and metrics
+  utils/         # reproducibility helpers
+tools/
+  train_classification.py
+  infer_classification.py
+  run_ours_class.bat
+  run_ours_class_tuina.bat
+```
+
+### Accu Classification
+
+From the repository root:
+
+```bat
+set PYTHON=C:\Users\Xiati\anaconda3\envs\torch-gpu\python.exe
+set CME_AQA_DATA_ROOT=E:\NCC\TCM_AQA
+tools\run_ours_class.bat
+```
+
+This mirrors the historical `OursClass.bat` setup using
+`CAT_PoseTrans_Dense_l2_EarlyShare` on the acupuncture labels.
+
+### Tuina Classification
+
+```bat
+set PYTHON=C:\Users\Xiati\anaconda3\envs\torch-gpu\python.exe
+set CME_AQA_DATA_ROOT=E:\NCC\TCM_AQA
+tools\run_ours_class_tuina.bat
+```
+
+### Direct Python Entry Point
+
+```bat
+python tools\train_classification.py ^
+  --fpv_json E:\NCC\TCM_AQA\output_p\A_FPV ^
+  --tpv_json E:\NCC\TCM_AQA\output_p\A_TPV ^
+  --fpv_f E:\NCC\TCM_AQA\output_v\A_FPV ^
+  --tpv_f E:\NCC\TCM_AQA\output_v\A_TPV ^
+  --label_file E:\NCC\TCM_AQA\Accu_extended.csv ^
+  --out_dir E:\NCC\TCM_AQA\repo\runs\class_accu ^
+  --model_variant l2 ^
+  --num_classes 9 ^
+  --num_epochs 20
+```
+
+Training writes `metrics.csv`, `summary.json`, and fold checkpoints under the selected
+`--out_dir`. Generated runs, checkpoints, logs, and caches are intentionally ignored by
+Git.

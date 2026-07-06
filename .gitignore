@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.runs/
+runs/
+weights/
+Weights/
+*.pth
+*.pt
+*.log
+*.csv
+!Sample_Videos_and_Labels/*.csv
