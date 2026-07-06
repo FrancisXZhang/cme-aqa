@@ -5,6 +5,10 @@ Currently, only the inference and training code is available now. Upon acceptanc
 
 The TCM-AQA61 dataset can be downloaded from this SharePoint folder:
 [Download TCM-AQA61 dataset](https://uoe-my.sharepoint.com/:f:/g/personal/xzhang19_ed_ac_uk/IgCGdBQc224ZQJkrLLi3w86zAbxREoC22jJFyZw-61-3hs0?e=vHQwtu).
+Due to current institutional OneDrive sharing restrictions, access cannot be opened to all external users automatically.
+If you are not affiliated with the University of Edinburgh, please email
+[francis.xiatian.zhang@outlook.com](mailto:francis.xiatian.zhang@outlook.com) to request dataset access;
+I will add approved users to the access list manually.
 
 ---
 
