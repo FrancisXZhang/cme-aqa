@@ -150,3 +150,20 @@ python tools\train_classification.py ^
 Training writes `metrics.csv`, `summary.json`, and fold checkpoints under the selected
 `--out_dir`. Generated runs, checkpoints, logs, and caches are intentionally ignored by
 Git.
+
+---
+
+## Citation
+
+If you use this repository, please cite:
+
+```bibtex
+@article{zhang26cross,
+ author={Zhang, Francis Xiatian and Yao, Hao and Chen, Shengxuan and Zhu, Hong and Jia, Hongxiao and Zheng, Sisi and Shum, Hubert P. H.},
+ journal={IEEE Transactions on Neural Systems and Rehabilitation Engineering},
+ title={Cross-view Multimodal Vision-Based Assessment Framework for Traditional Chinese Medicine Rehabilitation Training},
+ year={2026},
+ doi={10.1109/TNSRE.2026.3705649},
+ publisher={IEEE},
+}
+```
