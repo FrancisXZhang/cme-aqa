@@ -121,8 +121,6 @@ tools/
 From the repository root:
 
 ```bat
-set PYTHON=C:\Users\Xiati\anaconda3\envs\torch-gpu\python.exe
-set CME_AQA_DATA_ROOT=E:\NCC\TCM_AQA
 tools\run_ours_class.bat
 ```
 
@@ -132,8 +130,6 @@ This mirrors the historical `OursClass.bat` setup using
 ### Tuina Classification
 
 ```bat
-set PYTHON=C:\Users\Xiati\anaconda3\envs\torch-gpu\python.exe
-set CME_AQA_DATA_ROOT=E:\NCC\TCM_AQA
 tools\run_ours_class_tuina.bat
 ```
 
