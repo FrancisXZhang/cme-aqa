@@ -1,7 +1,5 @@
 # Code Repository for the Paper  
-**"Towards Cross-View Multimodality Action Quality Assessment for Traditional Chinese Medicine Physical Therapy"**
-
-Currently, only the inference and training code is available now. Upon acceptance, the full proposed dataset will be released.
+**"Cross-view Multimodal Vision-Based Assessment Framework for Traditional Chinese Medicine Rehabilitation Training"**
 
 The TCM-AQA61 dataset can be downloaded from this SharePoint folder:
 [Download TCM-AQA61 dataset](https://uoe-my.sharepoint.com/:f:/g/personal/xzhang19_ed_ac_uk/IgCGdBQc224ZQJkrLLi3w86zAbxREoC22jJFyZw-61-3hs0?e=vHQwtu).
