@@ -3,7 +3,7 @@
 
 ## Updates
 
-- **2026-10-27:** Added the public [Durham University dataset download](#download) and a note on feature extraction pipeline reproduction.
+- **2026-10-27:** Added the public [Durham University dataset download](#download) .
 
 ## Download
 
