@@ -1,12 +1,24 @@
 # Code Repository for the Paper  
 **"Cross-view Multimodal Vision-Based Assessment Framework for Traditional Chinese Medicine Rehabilitation Training"**
 
-The TCM-AQA61 dataset can be downloaded from this SharePoint folder:
-[Download TCM-AQA61 dataset](https://uoe-my.sharepoint.com/:f:/g/personal/xzhang19_ed_ac_uk/IgCGdBQc224ZQJkrLLi3w86zAbxREoC22jJFyZw-61-3hs0?e=vHQwtu).
-Due to current institutional OneDrive sharing restrictions, access cannot be opened to all external users automatically.
-If you are not affiliated with the University of Edinburgh, please email
-[francis.xiatian.zhang@outlook.com](mailto:francis.xiatian.zhang@outlook.com) to request dataset access;
-I will add approved users to the access list manually.
+## Updates
+
+- **2026-10-27:** Added the public [Durham University dataset download](#download) and a note on feature extraction pipeline reproduction.
+
+## Download
+
+The **TCM-AQA61** dataset is publicly available from the Durham University Research Data Repository:
+
+**[Download TCM-AQA61](https://researchdata.durham.ac.uk/collections/r1jm214p229)**
+
+The collection includes first-person and third-person videos for acupuncture and Tuina, together with the corresponding annotation CSV files.
+
+## TODO
+
+- [ ] Reproduce and release the original feature extraction and preprocessing pipeline.
+- [ ] Document the steps for preparing pose and visual features for training.
+
+This work started as an early PhD project around three years ago. I am currently reconstructing and reproducing the original feature extraction and preprocessing pipeline in my personal time. This is still in progress; I will share the scripts and instructions once they have been verified.
 
 ---
 
