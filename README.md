@@ -3,7 +3,7 @@
 
 ## Updates
 
-- **2026-10-27:** Added the public [Durham University dataset download](#download) .
+- **2026-10-27:** Added a [public dataset download option via Durham University](#download) to make the dataset easier to access and download.
 
 ## Download
 
