@@ -13,6 +13,10 @@ The **TCM-AQA61** dataset is publicly available from the Durham University Resea
 
 The collection includes first-person and third-person videos for acupuncture and Tuina, together with the corresponding annotation CSV files.
 
+**Alternative download:** [SharePoint / OneDrive folder](https://uoe-my.sharepoint.com/:f:/g/personal/xzhang19_ed_ac_uk/IgCGdBQc224ZQJkrLLi3w86zAbxREoC22jJFyZw-61-3hs0?e=vHQwtu). This may offer faster downloads for University of Edinburgh users. Access is subject to institutional sharing restrictions; external users can use the public Durham repository above.
+
+For dataset access issues, questions, or other requests, please contact [francis.xiatian.zhang@outlook.com](mailto:francis.xiatian.zhang@outlook.com).
+
 ## TODO
 
 - [ ] Reproduce and release the original feature extraction and preprocessing pipeline.
