@@ -22,8 +22,6 @@ For dataset access issues, questions, or other requests, please contact [francis
 - [ ] Reproduce and release the original feature extraction and preprocessing pipeline.
 - [ ] Document the steps for preparing pose and visual features for training.
 
-This work started as an early PhD project around three years ago. I am currently reconstructing and reproducing the original feature extraction and preprocessing pipeline in my personal time. This is still in progress; I will share the scripts and instructions once they have been verified.
-
 ---
 
 ## Overview  
